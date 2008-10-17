@@ -1,0 +1,9 @@
+/*  Cookie Greeter, version <%= APP_VERSION %>
+ *  (c) 2008 Fernando García Samblas <fernando.garcia@the-cocktail.com> 
+ *
+ *  Cookie Greeter is freely distributable under 
+ *  the terms of an MIT-style license.
+ *
+ *  For details see the repo at http://github.com/nando/cookie-greeter
+ *
+ *--------------------------------------------------------------------------*/

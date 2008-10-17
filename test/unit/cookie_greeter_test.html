@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>JavaScript unit test file</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script src="../assets/jsunittest.js" type="text/javascript"></script>
+  <script src="../assets/jshoulda.js" type="text/javascript"></script>
+  
+  <script src="../../src/cookie_greeter_lib.js" type="text/javascript"></script>
+  
+  <link rel="stylesheet" href="../assets/unittest.css" type="text/css" />
+</head>
+<body>
+
+<div id="content">
+
+  <div id="header">
+    <h1>JavaScript unit test file</h1>
+    <p>
+      This file tests <strong>cookie_greeter_lib.js</strong>.
+    </p>
+  </div>
+
+  <!-- Log output (one per Runner, via {testLog: "testlog"} option)-->
+  <h2>First of all, let's start with CookieGreeter.readCookie function:</h2>
+  <div id="testlog_for_readCookie"></div>
+
+  <h2>And now, ladies and gentlemen, the one and only CookieGreeter!</h2>
+  <div id="testlog"></div>
+
+  <!-- Put sample/test html here -->
+  <hr>
+  <div id="sample" style="color: #aaa;">
+    <div id="first_anonymous_div">Identificación y... ¡los papeles del camión!</div>
+    <div id="first_personal_div">
+      Hola -cookie_greeter_username-, tu <a href="/users/-cookie_greeter_username-">cuenta</a>
+    </div>
+    <div id="second_anonymous_div">Regístrate tú, que a mí me da cosa</div>
+    <div id="second_personal_div">-cookie_greeter_username-, me caes muy muy muy bien</div>
+    <div id="third_personal_div">De veras -cookie_greeter_username-, eres la repera en verso</div>
+  </div>
+</div>
+
+<script type="text/javascript">
+// <![CDATA[
+  var element = function(id) { return document.getElementById(id) };
+
+  context('CookieGreeter.readCookie', {},
+    should('return the value of a cookie if it exists', function() {
+      var name = 'ice_cookie';
+      var value = 'hot value for an ice cookie';
+      document.cookie = name + "=" + value;
+      this.assertEqual(value, CookieGreeter.readCookie(name));
+      document.cookie = name + "=; max-age=0";
+    }),
+    should('return false if asked for a cookie that does not exist', function() {
+      this.assertEqual(false, CookieGreeter.readCookie('CookieGreeterDummyCookie'));
+    }),
+    should('return false if asked for a cookie that has a blank value', function() {
+      var name = 'blank_cookie';
+      document.cookie = name + "=     ";
+      this.assertEqual(false, CookieGreeter.readCookie(name));
+      document.cookie = name + "=; max-age=0";
+    })
+  )({ testLog: 'testlog_for_readCookie'});
+
+  context('Greeting a client without cookie', {
+    setup: function() {
+      anonymous_div_id = 'first_anonymous_div';
+      personal_div_id = 'first_personal_div';
+    } },
+
+    context('with simple elements as arguments', {
+      setup: function() {
+        CookieGreeter.greet('I_SHOULD_NOT_EXIST', anonymous_div_id, personal_div_id);
+      }},
+      should('show the anonymous div', function(){
+        this.assertVisible(element(anonymous_div_id));
+      }),
+      should('hide the personal div', function(){
+        this.assertNotVisible(element(personal_div_id));
+      })
+    ),
+
+    context('with arrays of elements as arguments', {
+      setup: function() {
+        anonymous = [anonymous_div_id, 'second_anonymous_div'];
+        personal = [ personal_div_id, 
+          'second_personal_div',
+          'third_personal_div'];
+        CookieGreeter.greet('I_SHOULD_NOT_EXIST', anonymous, personal);
+      }},
+      should('show all the anonymous divs', function(){
+        for(var i in anonymous) this.assertVisible(element(anonymous[i]));
+      }),
+      should('hide all the personal divs', function(){
+        for(var i in personal) this.assertNotVisible(element(personal[i]));
+      })
+    )
+  )();
+
+  context('Greeting a client with cookie', {
+    setup: function() {
+      name = 'cookie_greeter_username';
+      value = 'Oh! Baby! Please remember that I have a value';
+      document.cookie = name + "=" + value;
+      anonymous_div_id = 'first_anonymous_div';
+      personal_div_id = 'first_personal_div';
+    },
+    teardown: function() {
+      document.cookie = name + "=; max-age=0";
+    } },
+
+    context('with simple elements as arguments', {
+      setup: function() {
+        CookieGreeter.greet(name, anonymous_div_id, personal_div_id);
+      }},
+      should('hide the anonymous div', function(){
+        this.assertNotVisible(element(anonymous_div_id));
+      }),
+      should('show the personal div', function(){
+        this.assertVisible(element(personal_div_id));
+      }),
+      should('show the cookie value instead of the cookie name', function() {
+        html = element(personal_div_id).innerHTML;
+        this.assertEqual(-1, html.indexOf(name));
+        this.assertNotEqual(-1, html.indexOf(value));
+      })
+    ),
+
+    context('with arrays of elements as arguments', {
+      setup: function() {
+        anonymous = [anonymous_div_id, 'second_anonymous_div'];
+        personal = [ personal_div_id, 
+          'second_personal_div',
+          'third_personal_div'];
+        CookieGreeter.greet(name, anonymous, personal);
+      }},
+      should('hide all the anonymous divs', function(){
+        for(var i in anonymous) this.assertNotVisible(element(anonymous[i]));
+      }),
+      should('show all the personal divs', function(){
+        for(var i in personal) this.assertVisible(element(personal[i]));
+      }),
+      should('show the cookie value instead of the cookie name', function() {
+        for(var i in personal) {
+          html = element(personal[i]).innerHTML;
+          this.assertEqual(-1, html.indexOf(name));
+          this.assertNotEqual(-1, html.indexOf(value));
+        };
+      }) 
+    )
+  )();
+
+
+// ]]>
+</script>
+</body>
+</html>
