@@ -1,7 +1,7 @@
 Cookie Greeter: personal greeting based on a cookie
 
 Description:
-    This JavaScript project is a simple function that pretend to say hello to
+    This JavaScript project is a simple function that attempts to say hello to
     the user based on the presence of a cookie. If the cookie does not exists
     the anonymous elements are shown.
 

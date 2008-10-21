@@ -70,7 +70,18 @@
       anonymous_div_id = 'first_anonymous_div';
       personal_div_id = 'first_personal_div';
     } },
-
+    context('with an empty string as anonymous div id', {},
+      should('hide the personal div', function(){
+        CookieGreeter.greet('I_SHOULD_NOT_EXIST', '', personal_div_id);
+        this.assertNotVisible(element(personal_div_id));
+      })
+    ),
+    context('with an empty string as personal div id', {},
+      should('show the anonymous div', function(){
+        CookieGreeter.greet('I_SHOULD_NOT_EXIST', anonymous_div_id, '');
+        this.assertVisible(element(anonymous_div_id));
+      })
+    ),
     context('with simple elements as arguments', {
       setup: function() {
         CookieGreeter.greet('I_SHOULD_NOT_EXIST', anonymous_div_id, personal_div_id);
@@ -112,6 +123,18 @@
       document.cookie = name + "=; max-age=0";
     } },
 
+    context('with an empty string as anonymous div id', {},
+      should('show the personal div', function(){
+        CookieGreeter.greet(name, '', personal_div_id);
+        this.assertVisible(element(personal_div_id));
+      })
+    ),
+    context('with an empty string as personal div id', {},
+      should('hide the anonymous div', function(){
+        CookieGreeter.greet(name, anonymous_div_id, '');
+        this.assertNotVisible(element(anonymous_div_id));
+      })
+    ),
     context('with simple elements as arguments', {
       setup: function() {
         CookieGreeter.greet(name, anonymous_div_id, personal_div_id);
