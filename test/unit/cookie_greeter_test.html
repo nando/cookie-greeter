@@ -40,6 +40,7 @@
     <div id="second_personal_div">-cookie_greeter_username-, me caes muy muy muy bien</div>
     <div id="third_personal_div">De veras -cookie_greeter_username-, eres la repera en verso</div>
   </div>
+  <div id="multiple_cookies_sample">-second_cookie-</div>
 </div>
 
 <script type="text/javascript">
@@ -176,7 +177,39 @@
     )
   )();
 
+  context('Greeting a client with two cookies', {
+    setup: function() {
+      name = 'cookie_greeter_username';
+      value = 'Oh! Baby! Please remember that I have a value';
+      second_name = 'second_cookie';
+      second_value = 'Excuse me again! I really have two values';
+      document.cookie = name + "=" + value;
+      document.cookie = second_name + "=" + second_value;
+      personal_div_id = 'first_personal_div';
+      second_personal_div_id = 'multiple_cookies_sample';
+    },
+    teardown: function() {
+      document.cookie = name + "=; max-age=0;";
+      document.cookie = second_name + "=; max-age=0;";
+    } },
 
+    context('calling CookieGreeter twice', {},
+      should('show both personal divs with their values instead of their cookie names', function(){
+        var ids = [personal_div_id, second_personal_div_id];
+        var names = [name, second_name];
+        var values = [value, second_value];
+        CookieGreeter.greet(name, '', personal_div_id);
+        CookieGreeter.greet(second_name, '', second_personal_div_id);
+        this.assertVisible(element(personal_div_id));
+        this.assertVisible(element(second_personal_div_id));
+        for(var i in ids) {
+          html = element(ids[i]).innerHTML;
+          this.assertEqual(-1, html.indexOf(names[i]));
+          this.assertNotEqual(-1, html.indexOf(values[i]));
+        };
+      })
+    )
+  )();
 // ]]>
 </script>
 </body>
