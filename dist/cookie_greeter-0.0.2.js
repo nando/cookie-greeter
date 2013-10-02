@@ -53,7 +53,7 @@ var CookieGreeter = {
         if (e) {
           var re = new RegExp('-' + name + '-', "g");
           e.innerHTML = e.innerHTML.replace(re, value);
-          e.style.display = 'block';
+          e.style.display = CookieGreeter.display;
         };
       };
     }
